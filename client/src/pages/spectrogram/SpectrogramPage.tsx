@@ -8,7 +8,7 @@ import { TimePlot } from './components/TimePlot';
 import { FrequencyPlot } from './components/FrequencyPlot';
 import { IQPlot } from './components/IQPlot';
 import { Layer, Image, Stage } from 'react-konva';
-import { selectFft, calculateTileNumbers, range, SelectFftReturn } from '@/utils/selector';
+import { selectFft, filterVisibleTiles, calculateTileNumbers, range, SelectFftReturn } from '@/utils/selector';
 import { AnnotationViewer } from '@/pages/spectrogram/components/annotation/AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import { RulerSide } from './RulerSide';
@@ -71,7 +71,7 @@ export const SpectrogramPage = () => {
   const [plotHeight, setPlotHeight] = useState(0);
   const [missingTiles, setMissingTiles] = useState([]);
   const metaQuery = getMeta(type, account, container, filePath);
-  const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+  const tiles = filterVisibleTiles(Math.floor(lowerTile), Math.ceil(upperTile), fftSize, spectrogramHeight);
   const [fftData, setFFTData] = useState<Record<number, Float32Array>>({});
   const [meta, setMeta] = useState<SigMFMetadata>(metaQuery.data);
   const [taps, setTaps] = useState<number[]>([1]);
@@ -148,6 +148,7 @@ export const SpectrogramPage = () => {
     const ret = selectFft(
       lowerTile,
       upperTile,
+      spectrogramHeight,
       fftSize,
       magnitudeMax,
       magnitudeMin,
@@ -170,6 +171,7 @@ export const SpectrogramPage = () => {
     const ret = selectFft(
       lowerTile,
       upperTile,
+      spectrogramHeight,
       fftSize,
       magnitudeMax,
       magnitudeMin,

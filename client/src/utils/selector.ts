@@ -12,7 +12,7 @@ stage4 - uint8 values after having the min/max and colormap applied
 
 // @ts-ignore
 import { fftshift } from 'fftshift';
-import { TILE_SIZE_IN_IQ_SAMPLES } from './constants';
+import { MINIMAP_FFT_SIZE, TILE_SIZE_IN_IQ_SAMPLES } from './constants';
 import { FFT } from '@/utils/fft';
 import { SigMFMetadata } from './sigmfMetadata';
 
@@ -129,6 +129,7 @@ export interface SelectFftReturn {
 export const selectFft = (
   lowerTile: number,
   upperTile: number,
+  spectrogramHeight: number,
   fftSize: number, // in units of IQ samples
   magnitudeMax: number,
   magnitudeMin: number,
@@ -144,7 +145,7 @@ export const selectFft = (
   }
 
   // Go through each of the tiles and compute the FFT and convert to RGB
-  const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+  const tiles = filterVisibleTiles(Math.floor(lowerTile), Math.ceil(upperTile), fftSize, spectrogramHeight);
   for (let tile of tiles) {
     if (!!fftData[tile]) {
       continue;
@@ -220,6 +221,33 @@ export const selectFft = (
   };
   return selectFftReturn;
 };
+
+export const filterVisibleTiles = 
+(
+  lowerTile: number, 
+  upperTile: number,
+  fftSize: number,
+  spectrogramHeight: number
+): Array<number> => {
+
+  let tiles = new Set<number>();
+  const fftsPerTile = TILE_SIZE_IN_IQ_SAMPLES / fftSize;
+  const numberOfTiles = upperTile - lowerTile;
+  const totalFfts = fftsPerTile * numberOfTiles;
+  const fftsPerRow = totalFfts / spectrogramHeight;
+
+  if (lowerTile < 0 || upperTile < 0) {
+    return [];
+  }
+
+  for (let fftNumber = 0; fftNumber <= totalFfts; fftNumber += fftsPerRow) {
+    let tileNumber = Math.floor(fftNumber / fftsPerTile);
+    tiles.add(tileNumber);
+  }
+
+  return [...tiles];
+};
+
 
 export function calculateTileNumbers(
   handleTop: any,
