@@ -1,6 +1,8 @@
-from pydantic import SecretStr
-from .cipher import decrypt
 from enum import Enum
+
+from pydantic import SecretStr
+
+from .cipher import decrypt
 
 
 class apiType(Enum):
@@ -10,26 +12,26 @@ class apiType(Enum):
 
 
 def add_URL_sasToken(account, container, sasToken, filepath, apiType: apiType):
-    if (
-        sasToken is not None
-        and sasToken != ""
-    ):
+    match apiType:
+        case apiType.THUMB if filepath and filepath.strip():
+            bloburl = (
+                f"https://{account}.blob.core.windows.net/{container}/{filepath}.jpg"
+            )
+        case apiType.IMAGE:
+            bloburl = f"https://{account}.blob.core.windows.net/{container}/datasource_thumbnail.jpg"
+        case apiType.IQDATA if filepath and filepath.strip():
+            bloburl = f"https://{account}.blob.core.windows.net/{container}/{filepath}.sigmf-data"
+        case _:
+            raise ValueError("Invalid apiType value")
+
+    if sasToken is not None and sasToken != "":
         # linter fix for error: "get_secret_value" is not a known member of "None" (reportOptionalMemberAccess)
         x = decrypt(sasToken)
         y = ""
         if x is not None:
             y = x.get_secret_value()
-
-        if apiType == apiType.THUMB and filepath is not None and filepath != "":
-            bloburl = f'https://{account}.blob.core.windows.net/{container}/{filepath}.jpg'
-        elif apiType == apiType.IMAGE:
-            bloburl = f'https://{account}.blob.core.windows.net/{container}/datasource_thumbnail.jpg'
-        elif apiType == apiType.IQDATA:
-            bloburl = f'https://{account}.blob.core.windows.net/{container}/{filepath}.sigmf-data'
-        else:
-            raise ValueError("Invalid apiType value")
-
         api_URL_sasToken = SecretStr(bloburl + "?" + y)
-        return api_URL_sasToken
     else:
-        return SecretStr("/logo192.png")
+        api_URL_sasToken = SecretStr(bloburl)
+
+    return api_URL_sasToken

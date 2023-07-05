@@ -7,10 +7,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import DualRangeSlider from '@/Components/DualRangeSlider/DualRangeSlider';
-import { SigMFMetadata } from '@/Utils/sigmfMetadata';
-import { TILE_SIZE_IN_IQ_SAMPLES, COLORMAP_DEFAULT } from '@/Utils/constants';
-import { colMaps } from '@/Utils/colormap';
+import DualRangeSlider from '@/features/ui/dual-range-slider/DualRangeSlider';
+import { SigMFMetadata } from '@/utils/sigmfMetadata';
+import { TILE_SIZE_IN_IQ_SAMPLES, COLORMAP_DEFAULT } from '@/utils/constants';
+import { colMaps } from '@/utils/colormap';
 
 const zoomLevels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 // Replace above with this when we've done the mods to fetching tiles
