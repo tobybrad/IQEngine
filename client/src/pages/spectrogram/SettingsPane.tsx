@@ -12,9 +12,8 @@ import { SigMFMetadata } from '@/utils/sigmfMetadata';
 import { TILE_SIZE_IN_IQ_SAMPLES, COLORMAP_DEFAULT } from '@/utils/constants';
 import { colMaps } from '@/utils/colormap';
 
-const zoomLevels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 // Replace above with this when we've done the mods to fetching tiles
-// const zoomLevels = [ 1, 2, 5, 10, 20, 50, 100, 1000, 10000, 100000 ];
+const zoomLevels = [ 1, 2, 5, 10, 20, 50, 100, 1000, 10000, 100000 ];
 
 export class SettingsPaneProps {
   meta: SigMFMetadata;
