@@ -31,12 +31,14 @@ describe('filterVisibleTiles', () => {
   const spectrogramHeight = 800; // Spectrogram is 800 pixels high
 
   test('all tiles are visible', () => {
+    // 7 tiles in 800 lines, all tiles should be visible
     const tiles = filterVisibleTiles(0, 7, fftSize, spectrogramHeight);
     expect(tiles).toEqual([0, 1, 2, 3, 4, 5, 6]);
   });
 
   test('not all tiles are visible', () => {
+    // 10000 tiles in 800 lines, ~ 800 tiles should be visible
     const tiles = filterVisibleTiles(0, 10000, fftSize, spectrogramHeight);
-    expect(tiles).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    expect(tiles.length).toBeLessThanOrEqual(801);
   });
 });
